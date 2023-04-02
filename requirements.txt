@@ -1,7 +1,7 @@
-asgiref==3.4.1
-boto==2.49.0
-boto3==1.14.56
-botocore==1.21.37
+asgiref==3.5.0
+boto==2.53.0
+boto3==1.19.37
+botocore==1.22.37
 certifi==2022.12.7
 charset-normalizer==3.1.0
 coreapi==2.3.3
