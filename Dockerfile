@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.11.1
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -9,4 +9,4 @@ WORKDIR /chatapi
 
 COPY . /chatapi/
 
-RUN pip3 install --upgrade pip3 && pip3 install pip-tools && pip3 install -r requirements.txt 
+RUN pip install --upgrade pip && pip install pip-tools && pip install -r requirements.txt 
