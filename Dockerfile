@@ -22,7 +22,6 @@ RUN pip install \
     charset-normalizer==3.1.0 \
     click==8.1.3 \
     colorama==0.4.6 \
-    Django==4.1.7 \
     django-cors-headers==3.14.0 \
     django-rest-swagger==2.2.0 \
     django-storages==1.13.2 \
@@ -55,3 +54,4 @@ RUN pip install \
     urllib3==1.26.15\
     coreapi==2.3.3 \
     coreschema==0.0.4 \
+    Django==4.1.7 
