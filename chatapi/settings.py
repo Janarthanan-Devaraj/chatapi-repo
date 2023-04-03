@@ -30,7 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
+CSRF_TRUSTED_ORIGINS = ['http://api.onedev.co.in','https://api.onedev.co.in']
 # Application definition
 
 INSTALLED_APPS = [
