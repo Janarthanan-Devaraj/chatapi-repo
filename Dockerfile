@@ -37,7 +37,7 @@ RUN pip install \
     MarkupSafe==2.1.2 \
     openapi-codec==1.3.2 \
     packaging==23.0 \
-    Pillow==9.5.0 \
+    pillow==8.0.1 \
     PyJWT==2.6.0 \
     pyproject_hooks==1.0.0 \
     python-dateutil==2.8.2 \
