@@ -9,4 +9,4 @@ WORKDIR /chatapi
 
 COPY . /chatapi/
 
-RUN pip install --upgrade pip && pip install pip-tools && pip install -r requirements.txt 
+RUN  RUN pip install attr && pip install --upgrade pip && pip install pip-tools && pip install -r requirements.txt 
