@@ -9,4 +9,4 @@ WORKDIR /chatapi
 
 COPY . /chatapi/
 
-RUN pip install --upgrade pip && pip install pip-tools 
+RUN pip install --upgrade pip && pip install pip-tools && sudo apt install python3-coreschema 
