@@ -22,8 +22,6 @@ RUN pip install \
     charset-normalizer==3.1.0 \
     click==8.1.3 \
     colorama==0.4.6 \
-    coreapi==2.3.3 \
-    coreschema==0.0.4 \
     Django==4.1.7 \
     django-cors-headers==3.14.0 \
     django-rest-swagger==2.2.0 \
@@ -54,4 +52,6 @@ RUN pip install \
     sqlparse==0.4.3 \
     tzdata==2023.3 \
     uritemplate==4.1.1 \
-    urllib3==1.26.15
+    urllib3==1.26.15\
+    coreapi==2.3.3 \
+    coreschema==0.0.4 \
