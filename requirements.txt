@@ -1,4 +1,4 @@
-asgiref==3.6.0
+asgiref==<4,>=3.5.2
 boto==2.49.0
 boto3==1.26.104
 botocore==1.29.104
@@ -6,7 +6,7 @@ certifi==2022.12.7
 charset-normalizer==3.1.0
 coreapi==2.3.3
 coreschema==0.0.4
-Django==3.1
+Django==4.1.7
 django-cors-headers==3.14.0
 django-rest-swagger==2.2.0
 django-storages==1.13.2
