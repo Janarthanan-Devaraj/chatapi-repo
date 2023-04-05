@@ -13,13 +13,14 @@ class LoginSerializer(serializers.Serializer):
 class RegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField()
     password = serializers.CharField()
+    email = serializers.EmailField()
     
     default_error_messages = {
         'username': 'The username should only contain alphanumeric characters'}
     
     class Meta:
         model = User
-        fields = ['username', 'password']
+        fields = ['username', 'password', "email"]
     
     def validate(self, attrs):
         username = attrs.get('username', '')

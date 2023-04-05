@@ -4,14 +4,15 @@ from .models import CustomUser, UserProfile
 from message_control.tests import create_image, SimpleUploadedFile
 
 class TestAuth(APITestCase):
-    login_url = "/user/login/"
-    register_url = "/user/register/"
-    refresh_url = "/user/token/refresh/"
+    login_url = "/user/login"
+    register_url = "/user/register"
+    refresh_url = "/user/token/refresh"
 
     def test_register(self):
         payload = {
             "username": "adefemigreat111",
             "password": "ade123",
+            "email": "adefemigreat@yahoo.com"
         }
 
         response = self.client.post(self.register_url, data=payload)
@@ -23,6 +24,7 @@ class TestAuth(APITestCase):
         payload = {
             "username": "adefemigreat",
             "password": "ade123",
+            "email": "adefemigreat@yahoo.com"
         }
 
         # register
@@ -42,6 +44,7 @@ class TestAuth(APITestCase):
         payload = {
             "username": "adefemigreat1111",
             "password": "ade123",
+            "email": "adefemigreat@yahoo.com"
         }
 
         # register
@@ -65,12 +68,13 @@ class TestAuth(APITestCase):
 class TestUserInfo(APITestCase):
     profile_url = "/user/profile"
     file_upload_url = "/message/file-upload"
-    login_url = "/user/login/"
+    login_url = "/user/login"
     
     def setUp(self):
         payload = {
             "username": "adefemigreat",
             "password": "ade123",
+            "email": "adefemigreat@yahoo.com"
         }
         
         self.user = CustomUser.objects.create_user(**payload)
@@ -171,13 +175,13 @@ class TestUserInfo(APITestCase):
                                    caption="live is all about living", about="I'm a youtuber")
         
         user2 = CustomUser.objects.create_user(
-            username="tester", password="tester123")
+            username="tester", password="tester123", email="adefemi@yahoo.com")
         
         UserProfile.objects.create(user=user2, first_name="Vester", last_name="Mango",
                                    caption="it's all about testing", about="I'm a youtuber")
         
         user3 = CustomUser.objects.create_user(
-            username="vasman", password="vasman123")
+            username="vasman", password="vasman123", email="adefemi@yahoo.com2")
         UserProfile.objects.create(user=user3, first_name="Adeyemi", last_name="Boseman",
                                    caption="it's all about testing", about="I'm a youtuber")
         
