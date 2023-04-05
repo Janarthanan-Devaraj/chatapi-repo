@@ -14,11 +14,11 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password=None):
+    def create_superuser(self, username, password=None, **extra_fields):
         if password is None:
             raise TypeError('Password should not be none')
 
-        user = self.create_user(username, password)
+        user = self.create_user(username, password, **extra_fields)
         user.is_superuser = True
         user.is_staff = True
         user.save()
@@ -36,6 +36,7 @@ class CustomUser(AbstractBaseUser):
     is_online = models.DateTimeField(default=timezone.now)
 
     USERNAME_FIELD = "username"
+    REQUIRED_FIELDS=["email"]
     objects = CustomUserManager()
 
     def __str__(self):
