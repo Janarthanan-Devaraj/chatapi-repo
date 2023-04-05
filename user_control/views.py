@@ -6,13 +6,27 @@ from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from chatapi.custom_methods import IsAuthenticatedCustom
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from django.db import IntegrityError
 from rest_framework.viewsets import ModelViewSet
 import re
 from django.db.models import Q, Count, Subquery, OuterRef
+import jwt
 
+
+# def decodeJWT(bearer):
+#     if not bearer:
+#         return None
+
+#     token = bearer[7:]
+#     decoded = jwt.decode(token, key=settings.SECRET_KEY)
+#     if decoded:
+#         try:
+#             return CustomUser.objects.get(id=decoded["user_id"])
+#         except Exception:
+#             return None
+        
 class LoginView(APIView):
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
@@ -39,17 +53,17 @@ class LoginView(APIView):
 
 
 class RegisterView(APIView):
+    serializer_class = RegisterSerializer
 
     def post(self, request):
-        
-        try:
-            serializer = RegisterSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response({"success": "User created."}, status=status.HTTP_201_CREATED)
-        
-        except IntegrityError:
-                return Response({"error": "Username already exists."})
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        username = serializer.validated_data.pop("username")
+
+        CustomUser.objects.create_user(username=username, **serializer.validated_data)
+
+        return Response({"success": "User created."}, status=201)
     
 
 
@@ -94,3 +108,11 @@ class UserProfileView(ModelViewSet):
     def normalize_query(query_string, findterms=re.compile(r'"([^"]+)"|(\S+)').findall, normspace=re.compile(r'\s{2,}').sub):
         return [normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)]
     
+
+class MeView(APIView):
+    permission_classes = (IsAuthenticated, )
+    serializer_class = UserProfileSerializer
+
+    def get(self, request):
+        user_id = request.user.id
+        return Response({"id": user_id}, status=200)
