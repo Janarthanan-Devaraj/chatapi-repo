@@ -110,7 +110,7 @@ class UserProfileView(ModelViewSet):
     
 
 class MeView(APIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticatedCustom, )
     serializer_class = UserProfileSerializer
 
     def get(self, request):
