@@ -1,6 +1,7 @@
 from .models import CustomUser
 from django.conf import settings
 from rest_framework.views import APIView
+from rest_framework import generics
 from .serializers import LoginSerializer, RegisterSerializer, UserProfileSerializer, UserProfile
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
@@ -38,6 +39,7 @@ class LoginView(APIView):
         user = authenticate(request, 
             username=serializer.validated_data['username'],
             password=serializer.validated_data['password'])
+        print(user)
 
         if not user:
             return Response({"error": "Invalid email or password"}, status="400")
@@ -73,18 +75,27 @@ class UserProfileView(ModelViewSet):
     permission_classes = [IsAuthenticatedCustom]
     
     def get_queryset(self):
+        
+        if self.request.method.lower() != "get":
+            return self.queryset
+
         data = self.request.query_params.dict()
-        keyword = data.get("keyword", None)
+        data.pop("page", None)
+        keyword = data.pop("keyword", None)
+
         
         if keyword:
             search_fields = {
-                "user__username" , "first_name", "last_name"
+                "user__username" , "first_name", "last_name", "user__email"
             }
             
             query = self.get_query(keyword, search_fields)
-            return self.queryset.filter(query).distinct()
-        
-        return self.queryset
+            try:
+                return self.queryset.filter(query).filter(**data).exclude(Q(user_id=self.request.user.id)| Q(user__is_superuser=True)).distinct()
+            except Exception as e:
+                raise Exception(e)
+            
+        return self.queryset.filter(**data).exclude(Q(user_id=self.request.user.id)| Q(user__is_superuser=True)).distinct()
     
     @staticmethod
     def get_query(query_string, search_fields):
@@ -108,11 +119,12 @@ class UserProfileView(ModelViewSet):
     def normalize_query(query_string, findterms=re.compile(r'"([^"]+)"|(\S+)').findall, normspace=re.compile(r'\s{2,}').sub):
         return [normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)]
     
+    
+    
 
-class MeView(APIView):
-    permission_classes = (IsAuthenticatedCustom, )
+class MeView(generics.RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
     serializer_class = UserProfileSerializer
-
-    def get(self, request):
-        user_id = request.user.id
-        return Response({"id": user_id}, status=200)
+    
+    def get_object(self):
+        return self.request.user.user_profile

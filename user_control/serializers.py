@@ -5,6 +5,7 @@ from message_control.serializers import GenericFileUploadSerializer
 from django.db.models import Q
 
 User = get_user_model()
+
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
