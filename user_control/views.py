@@ -97,6 +97,9 @@ class UserProfileView(ModelViewSet):
             
         return self.queryset.filter(**data).exclude(Q(user_id=self.request.user.id)| Q(user__is_superuser=True)).distinct()
     
+
+    
+    
     @staticmethod
     def get_query(query_string, search_fields):
         query = None  # Query to search for every search term
@@ -120,11 +123,18 @@ class UserProfileView(ModelViewSet):
         return [normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)]
     
     
-    
-
-class MeView(generics.RetrieveAPIView):
-    permission_classes = (IsAuthenticated,)
+class ProfileView(generics.RetrieveAPIView):
+    permission_classes=(IsAuthenticatedCustom,)
+    queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     
     def get_object(self):
         return self.request.user.user_profile
+
+class MeView(APIView):
+    permission_classes = (IsAuthenticatedCustom, )
+    serializer_class = UserProfileSerializer
+
+    def get(self, request):
+        user_id = request.user.id
+        return Response({"id": user_id}, status=200)
