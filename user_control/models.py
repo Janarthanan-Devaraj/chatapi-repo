@@ -59,7 +59,7 @@ class UserProfile(models.Model):
     caption = models.CharField(max_length=250)
     about = models.TextField()
     profile_picture = models.ForeignKey(
-        GenericFileUpload, related_name="user_image", on_delete=models.SET_NULL, null=True)
+        GenericFileUpload, related_name="user_image", on_delete=models.SET_NULL, null=True, blank = True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
