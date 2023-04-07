@@ -7,6 +7,7 @@ from chatapi.custom_methods import IsAuthenticatedCustom
 from rest_framework.response import Response
 from django.db.models import Q
 from django.conf import settings
+from django.views import APIView
 import requests
 import json
 
@@ -110,3 +111,12 @@ class MessageView(ModelViewSet):
         
         handleRequest(serializer)
         return Response(serializer.data, status=200)
+
+
+class ReadMultipleMessages(APIView):
+    
+    def post(self, request):
+        data = request.data.get("message_ids", None)
+        
+        Message.objects.filter(id__in=data).update(is_read=True)
+        return Response("success")
