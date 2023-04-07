@@ -68,5 +68,16 @@ class UserProfile(models.Model):
 
     class Meta:
         ordering = ("created_at",)
+        
+        
+class Favorite(models.Model):
+    user = models.ForeignKey(CustomUser, related_name="user_favorite", on_delete=models.CASCADE)
+    favorite = models.ForeignKey(CustomUser, related_name="user_favoured", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
     
+    def __str__(self):
+        return f"{self.user.username} + {self.favorite.username}"
+    
+    class Meta:
+        ordering = ("created_at",)    
     
