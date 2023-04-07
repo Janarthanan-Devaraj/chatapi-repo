@@ -11,6 +11,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 import re
 from django.db.models import Q, Count,Subquery, OuterRef
+import json
 
 # def decodeJWT(bearer):
 #     if not bearer:
@@ -87,26 +88,20 @@ class UserProfileView(ModelViewSet):
                 return self.queryset.filter(query).filter(**data).exclude(
                     Q(user_id=self.request.user.id) |
                     Q(user__is_superuser=True)
-                ).annotate(
-                    fav_count=Count(self.user_fav_query(self.request.user))
-                ).order_by("-fav_count")
+                ).distinct().order_by("user__user_favoured_id")
             except Exception as e:
                 raise Exception(e)
-
-        result = self.queryset.filter(**data).exclude(
+        
+        return self.queryset.filter(**data).exclude(
             Q(user_id=self.request.user.id) |
-            Q(user__is_superuser=True)
-        ).annotate(
-            fav_count=Count(self.user_fav_query(self.request.user))
-        ).order_by("-fav_count")
-        return result
+            Q(user__is_superuser=True)).distinct().order_by("user__user_favoured_id")
 
-    @staticmethod
-    def user_fav_query(user):
-        try:
-            return user.user_favorites.favorite.filter(id=OuterRef("user_id")).values("pk")
-        except Exception:
-            return []
+    # @staticmethod
+    # def user_fav_query(user):
+    #     try:
+    #         return user.user_favorites.favorite.filter(id=OuterRef("user_id")).values("pk")
+    #     except Exception:
+    #         return []
 
 
     @staticmethod
