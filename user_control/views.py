@@ -10,7 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 import re
-from django.db.models import Q, Count, OuterRef
+from django.db.models import Q, Count,Subquery, OuterRef
 
 # def decodeJWT(bearer):
 #     if not bearer:
@@ -69,9 +69,8 @@ class UserProfileView(ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticatedCustom, )
-    
+
     def get_queryset(self):
-        
         if self.request.method.lower() != "get":
             return self.queryset
 
@@ -79,43 +78,37 @@ class UserProfileView(ModelViewSet):
         data.pop("page", None)
         keyword = data.pop("keyword", None)
 
-        
         if keyword:
-            search_fields = {
-                "user__username" , "first_name", "last_name", "user__email"
-            }
-            
+            search_fields = (
+                "user__username", "first_name", "last_name", "user__email"
+            )
             query = self.get_query(keyword, search_fields)
             try:
                 return self.queryset.filter(query).filter(**data).exclude(
                     Q(user_id=self.request.user.id) |
                     Q(user__is_superuser=True)
                 ).annotate(
-                    fav_count = Count(self.user_fav_query(self.request.user))
+                    fav_count=Count(self.user_fav_query(self.request.user))
                 ).order_by("-fav_count")
-                
             except Exception as e:
                 raise Exception(e)
-            
-            
+
         result = self.queryset.filter(**data).exclude(
             Q(user_id=self.request.user.id) |
             Q(user__is_superuser=True)
         ).annotate(
-            fav_count = Count(self.user_fav_query(self.request.user))
+            fav_count=Count(self.user_fav_query(self.request.user))
         ).order_by("-fav_count")
-        
         return result
-    
 
     @staticmethod
     def user_fav_query(user):
         try:
             return user.user_favorites.favorite.filter(id=OuterRef("user_id")).values("pk")
-        
         except Exception:
             return []
-    
+
+
     @staticmethod
     def get_query(query_string, search_fields):
         query = None  # Query to search for every search term
@@ -133,11 +126,10 @@ class UserProfileView(ModelViewSet):
             else:
                 query = query & or_query
         return query
-    
+
     @staticmethod
     def normalize_query(query_string, findterms=re.compile(r'"([^"]+)"|(\S+)').findall, normspace=re.compile(r'\s{2,}').sub):
         return [normspace(' ', (t[0] or t[1]).strip()) for t in findterms(query_string)]
-    
     
 class ProfileView(generics.RetrieveAPIView):
     permission_classes=(IsAuthenticatedCustom,)
@@ -159,46 +151,40 @@ class MeView(APIView):
 class UpdateFavoriteView(APIView):
     permission_classes = (IsAuthenticatedCustom,)
     serializer_class = FavoriteSerializer
-    
+
     def post(self, request, *args, **kwargs):
-        
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
         try:
             favorite_user = CustomUser.objects.get(id=serializer.validated_data["favorite_id"])
         except Exception:
             raise Exception("Favorite user does not exist")
-        
+
         try:
             fav = request.user.user_favorites
         except Exception:
-            fav = Favorite.objects.create(user_id = request.user.id)
-            
-        
-        favorite = fav.objects.filter(id= favorite_user.id)
-        
+            fav = Favorite.objects.create(user_id=request.user.id)
+
+        favorite = fav.favorite.filter(id=favorite_user.id)
         if favorite:
             fav.favorite.remove(favorite_user)
             return Response("removed")
-        
-        fav.favorite.add(favorite_user)        
+
+        fav.favorite.add(favorite_user)
         return Response("added")
+
     
 
-class CheckIsFavoriteview(APIView):
+class CheckIsFavoriteView(APIView):
     permission_classes = (IsAuthenticatedCustom,)
-    
-    
+
     def get(self, request, *args, **kwargs):
         favorite_id = kwargs.get("favorite_id", None)
         try:
             favorite = request.user.user_favorites.favorite.filter(id=favorite_id)
-            
             if favorite:
                 return Response(True)
             return Response(False)
-        
         except Exception:
             return Response(False)
         
