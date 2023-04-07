@@ -72,7 +72,7 @@ class UserProfile(models.Model):
         
 class Favorite(models.Model):
     user = models.OneToOneField(CustomUser, related_name="user_favorite", on_delete=models.CASCADE)
-    favorite = models.ManyToManyField(CustomUser, related_name="user_favoured", on_delete=models.CASCADE)
+    favorite = models.ManyToManyField(CustomUser, related_name="user_favoured")
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
