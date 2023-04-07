@@ -7,7 +7,7 @@ from chatapi.custom_methods import IsAuthenticatedCustom
 from rest_framework.response import Response
 from django.db.models import Q
 from django.conf import settings
-from django.views import APIView
+from rest_framework.views import APIView
 import requests
 import json
 
