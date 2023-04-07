@@ -22,5 +22,5 @@ urlpatterns = [
     path('token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('update-favorite', UpdateFavoriteView.as_view()),
-    path('check-favorite/<int:favorite_id', CheckIsFavoriteview.as_view())
+    path('check-favorite/<int:favorite_id>', CheckIsFavoriteview.as_view())
 ]
